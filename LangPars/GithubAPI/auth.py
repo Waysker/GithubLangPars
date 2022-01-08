@@ -1,3 +1,5 @@
-# WHere to store it ?
-token = "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"
-header_dict = {'authorization': f"token {token}"}
+token = ''
+if token != '':
+    header_dict = {'authorization': f"token {token}"}
+else:
+    header_dict = {}

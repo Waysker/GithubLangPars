@@ -1,3 +1,4 @@
+import requests.exceptions
 from flask import Flask, jsonify
 from GithubAPI.functions import *
 
@@ -23,13 +24,20 @@ from GithubAPI.functions import *
 
 app = Flask(__name__)
 
+@app.errorhandler(requests.exceptions.HTTPError)
+def handle_HTTP_error(e):
+    if e.response.status_code == 401:
+        return 'Bad credentials!', 401
+    elif e.response.status_code == 403:
+        return f'API rate limit exceeded!. Authorize requests to raise the limit.', 403
+    else:
+        return f'HTTP error!: {e.response}'
+
 
 @app.route("/repos/<name>")
 def user(name):
-    repos = list_repos_languages(name)
     payload = {
-        'limits': '',
-        'repos': repos
+        'repos': list_repos_languages(name)
     }
 
     return jsonify(payload)
@@ -37,10 +45,8 @@ def user(name):
 
 @app.route("/lang/<name>")
 def lang(name):
-    languages = list_languages_percentage(name)
     payload = {
-        'limits': '',
-        'languages': languages
+        'languages': list_languages_percentage(name)
     }
 
     return jsonify(payload)
@@ -48,13 +54,10 @@ def lang(name):
 
 @app.route("/")
 def welcome():
-    # TODO
-    # new line ?
-    return f"Hello, you stumbled on github language parser API! Here's what it can do:  " \
-           "Get list of user repositories with information which languages are used: /repos/{user} " \
-           "Get percentage usage of language in all repositories"
+    return f"<p>Hello, you stumbled on github language parser API! Here's what it can do:</p>  " \
+           "<p>Get list of user repositories with information which languages are used: /repos/{user}</p> " \
+           "<p>Get percentage usage of language in all repositories: /lang/{user}</p>"
 
 
 if __name__ == '__main__':
-
     app.run(debug=True)
