@@ -3,7 +3,6 @@ from .request import github_request
 
 
 def list_languages_percentage(user):
-    # async ?
     repo_list = github_request(f"https://api.github.com/users/{user}/repos")
 
     user_languages_usage = defaultdict(int)

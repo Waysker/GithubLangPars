@@ -2,27 +2,9 @@ import requests.exceptions
 from flask import Flask, jsonify
 from GithubAPI.functions import *
 
-# TODO
-# if more requests maybe create storage for urls
-# showing current API requests limit
-# authorization for less request limits
-# Handle API exceeded and Wrong Message (wrong user)
-# 'API rate limit exceeded for 5.173.41.179. (But here\'s the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)'
-# wrong message handler
-# In case the JSON decoding fails, r.json() raises an exception. For example, if the response gets a 204 (No Content), or if the response contains invalid JSON, attempting r.json() raises requests.exceptions.JSONDecodeError. This wrapper exception provides interoperability for multiple exceptions that may be thrown by different python versions and json serialization libraries.
-# constant counter of requests, maybe in header ?
-# cache for requests as to not repeat for example request for list of repos, it is needed in both endpoints
-# BIG add oauth authorization from github through redirect
-
-# TODO
-# Cel zadania czy procenty są
-# Stwórz oprogramowanie pozwalające na:
-#  listowanie repozytoriów (nazwa i lista użytych języków programowania),
-#  uzyskanie procentowego udziału użytych języków pośród wszystkich repozytoriów,
-# dla dowolnego użytkownika serwisu GitHub.
-
 
 app = Flask(__name__)
+
 
 @app.errorhandler(requests.exceptions.HTTPError)
 def handle_HTTP_error(e):
@@ -30,8 +12,10 @@ def handle_HTTP_error(e):
         return 'Bad credentials!', 401
     elif e.response.status_code == 403:
         return f'API rate limit exceeded!. Authorize requests to raise the limit.', 403
+    elif e.response.status_code == 404:
+        return f'<p>Wrong address, make sure user exists</p> {e}'
     else:
-        return f'HTTP error!: {e.response}'
+        return f'HTTP error!: {e.response.status_code}'
 
 
 @app.route("/repos/<name>")
