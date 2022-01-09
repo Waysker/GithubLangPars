@@ -17,7 +17,7 @@
 - run index.py
 
 
-# Fetch contents using curl
+# To fetch contents look at requests.http or use curl
 curl http://localhost:5000/repos/{user}
 
 curl http://localhost:5000/lang/{user}

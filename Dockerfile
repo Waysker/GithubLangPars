@@ -10,4 +10,5 @@ COPY LangPars ./LangPars
 RUN pipenv install
 
 EXPOSE 5000
+RUN chmod +x bootstrap.sh
 ENTRYPOINT ["/usr/src/app/bootstrap.sh"]

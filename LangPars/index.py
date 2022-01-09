@@ -20,20 +20,22 @@ def handle_HTTP_error(e):
 
 @app.route("/repos/<name>")
 def user(name):
+    repos = list_repos_languages(name)
     payload = {
-        'repos': list_repos_languages(name)
+        'repos': [repo.toJson() for repo in repos]
     }
 
-    return jsonify(payload)
+    return payload
 
 
 @app.route("/lang/<name>")
 def lang(name):
+    languages = list_languages_percentage(name)
     payload = {
-        'languages': list_languages_percentage(name)
+        'languages': [language.toJson() for language in languages]
     }
 
-    return jsonify(payload)
+    return payload
 
 
 @app.route("/")
@@ -44,4 +46,5 @@ def welcome():
 
 
 if __name__ == '__main__':
+
     app.run(debug=True)
